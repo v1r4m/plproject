@@ -8,9 +8,13 @@
 #include <cstdlib> //-- I need this for atoi
 using namespace std;
 
+int vbltable[26];
 //-- Lexer prototype required by bison, aka getNextToken()
 int yylex(); 
-int yyerror(const char *p) { cerr << "Parse error!" << endl; }
+int yyerror(const char *p) { 
+  cerr << "Parse error!" << endl;
+  return 0;}
+
 %}
 
 //-- SYMBOL SEMANTIC VALUES -----------------------------
@@ -29,15 +33,18 @@ int yyerror(const char *p) { cerr << "Parse error!" << endl; }
   int val; 
   char sym;
 };
-%token <val> NUM
-%token <sym> OPA OPM LP RP STOP
-%type  <val> exp term sfactor factor res
+%token <val> NUM CHAR
+%token <sym> OPA OPM LP RP STOP INT EQ
+%type  <val> exp term sfactor factor res stt
 
 //-- GRAMMAR RULES ---------------------------------------
 %%
 run: res run | res    /* forces bison to process many stmts */
 
-res: exp STOP         { cout << $1 << endl; }
+res: stt STOP         { cout << $1 << endl; } /*$1 is result*/
+
+stt: INT CHAR EQ exp  { vbltable[$2]=$4; }
+| CHAR                { cout << vbltable[$1] << endl;}
 
 exp: exp OPA term     { $$ = ($2 == '+' ? $1 + $3 : $1 - $3); }
 | term                { $$ = $1; }
@@ -50,6 +57,7 @@ sfactor: OPA factor   { $$ = ($1 == '+' ? $2 : -$2); }
 
 factor: NUM           { $$ = $1; }
 | LP exp RP           { $$ = $2; }
+| CHAR                { $$ = vbltable[$1]; }
 
 %%
 //-- FUNCTION DEFINITIONS ---------------------------------

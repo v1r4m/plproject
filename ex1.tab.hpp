@@ -50,11 +50,14 @@ extern int yydebug;
   enum yytokentype
   {
     NUM = 258,
-    OPA = 259,
-    OPM = 260,
-    LP = 261,
-    RP = 262,
-    STOP = 263
+    CHAR = 259,
+    OPA = 260,
+    OPM = 261,
+    LP = 262,
+    RP = 263,
+    STOP = 264,
+    INT = 265,
+    EQ = 266
   };
 #endif
 
@@ -62,12 +65,12 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 28 "ex1.ypp"
+#line 32 "ex1.ypp"
 
   int val; 
   char sym;
 
-#line 71 "ex1.tab.hpp"
+#line 74 "ex1.tab.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;
