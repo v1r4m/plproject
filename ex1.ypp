@@ -36,7 +36,7 @@ int yyerror(const char *p) {
 };
 %token <val> NUM CHAR
 %token <sym> LP RP STOP INT EQ PRINT
-%type  <val> program id declaration subprog_declaration subprog_declarations compound_stt type identifier_list type standard_type subprog_head compound_stt
+%type  <val> program id declaration subprog_declaration subprog_declarations compound_stt type type standard_type subprog_head compound_stt
 arguments parameter_list actual_parameter_exp statement_list statement variable exp printstt procedure_stt compound_stt if_stt while_stt fpr_stt procedure_stt 
 exp simple_exp term factor sign multop addop relop
 
