@@ -34,30 +34,94 @@ int yyerror(const char *p) {
   char sym;
 };
 %token <val> NUM CHAR
-%token <sym> OPA OPM LP RP STOP INT EQ PRINT
-%type  <val> exp term sfactor factor res stt
+%token <sym> LP RP STOP INT EQ PRINT
+%type  <val> program id declaration subprog_declaration subprog_declarations compound_stt type identifier_list type standard_type subprog_head compound_stt
+arguments parameter_list actual_parameter_exp statement_list statement variable exp printstt procedure_stt compound_stt if_stt while_stt fpr_stt procedure_stt 
+exp simple_exp term factor sign multop addop relop
 
 //-- GRAMMAR RULES ---------------------------------------
 %%
-run: res run | res    /* forces bison to process many stmts */
+run: run program | program
 
-res: stt STOP         { /*cout << $1 << endl;*/ } /*$1 is result*/
+program: "mainprog" id STOP declaration subprog_declarations compound_stt
 
-stt: INT CHAR EQ exp  { vbltable[$2]=$4; }
-| PRINT CHAR          { cout << vbltable[$2] << endl;}
+declaration: type identifier_list STOP declaration
 
-exp: exp OPA term     { $$ = ($2 == '+' ? $1 + $3 : $1 - $3); }
-| term                { $$ = $1; }
+identifier_list: id
+| id STOP identifier_list
+| ""
 
-term: term OPM factor { $$ = ($2 == '*' ? $1 * $3 : $1 / $3); }
-| sfactor             { $$ = $1; }
+type: standard_type
+| standard_type "[" NUM "]"
 
-sfactor: OPA factor   { $$ = ($1 == '+' ? $2 : -$2); }
-| factor              { $$ = $1; }
+standard_type: "int"
 
-factor: NUM           { $$ = $1; }
-| LP exp RP           { $$ = $2; }
-| CHAR                { $$ = vbltable[$1]; }
+subprog_declarations: subprog_declaration subprog_declarations
+| ""
+
+subprog_declaration: subprog_head declaration compound_stt
+
+subprog_head: "function" id arguments ":" standard_type STOP
+| "procedure" id
+
+arguments: STOP
+| LP parameter_list RP
+| ""
+
+parameter_list: identifier_list ":" type
+| identifier_list ":" type STOP 
+
+compound_stt: "begin" statement_list "end"
+
+statement_list: statement
+| statement STOP statement_list
+
+statement: variable EQ exp
+| printstt
+| procedure_stt
+| compound_stt
+| if_stt
+| while_stt
+| for_stt
+| "return" exp
+| "nop"
+
+if_stt: "if" exp ":" statement ("elif" exp ":" statement)* ["else" ":" exp]
+
+while_stt: "while" exp ":" statement ["else" ":" statement]
+
+for_stt: "for" exp "in" exp ":" statement ["else" ":" statement]
+
+printstt: "print" "print" LP exp RP
+
+variable: id
+| id "[" exp "]"
+
+procedure_stt: id LP actual_parameter_exp RP
+
+actual_parameter_exp: expression_list
+|""
+
+expression_list: exp | exp "," expression_list
+
+exp: simple_exp
+| simpe_exp relop simple_exp 
+
+simple_exp : term
+| term addop simple_exp
+
+term: factor
+| factor multop term
+
+factor: variable
+| procedure_stt
+| "!" factor
+| sign
+
+sign: "+" | "-"
+relop: ">" | ">=" | "=<" | "<=" | "==" | "!=" | "in"
+addop: "+" | "-"
+multop: "*" | "/"
 
 %%
 //-- FUNCTION DEFINITIONS ---------------------------------
