@@ -9,6 +9,7 @@
 using namespace std;
 
 int vbltable[26];
+string functable[26];
 //-- Lexer prototype required by bison, aka getNextToken()
 int yylex(); 
 int yyerror(const char *p) { 
@@ -41,37 +42,25 @@ exp simple_exp term factor sign multop addop relop
 
 //-- GRAMMAR RULES ---------------------------------------
 %%
-run: run program | program
-
 program: "mainprog" id STOP declaration subprog_declarations compound_stt
 
-declaration: type identifier_list STOP declaration
+declaration: type identifier_list STOP
 
-identifier_list: id
-| id STOP identifier_list
-| ""
+/*?*/
 
 type: standard_type
-| standard_type "[" NUM "]"
+| standard_type CHAR "[" NUM "]"        { vbltable[$2] = $3;}      
 
 standard_type: "int"
 
 subprog_declarations: subprog_declaration subprog_declarations
 | ""
 
-subprog_declaration: subprog_head declaration compound_stt
+subprog_declaration: "function" id ":" standard_type STOP subprog_body   {functable[$2] = subporg_body;}
 
-subprog_head: "function" id arguments ":" standard_type STOP
-| "procedure" id
+subprog_body: declaration compound_stt
 
-arguments: STOP
-| LP parameter_list RP
-| ""
-
-parameter_list: identifier_list ":" type
-| identifier_list ":" type STOP 
-
-compound_stt: "begin" statement_list "end"
+compound_stt: "begin\n" statement_list "end\n"
 
 statement_list: statement
 | statement STOP statement_list
@@ -79,7 +68,7 @@ statement_list: statement
 statement: variable EQ exp
 | printstt
 | procedure_stt
-| compound_stt
+| ficompound_stt
 | if_stt
 | while_stt
 | for_stt
