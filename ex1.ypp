@@ -34,17 +34,17 @@ int yyerror(const char *p) {
   char sym;
 };
 %token <val> NUM CHAR
-%token <sym> OPA OPM LP RP STOP INT EQ
+%token <sym> OPA OPM LP RP STOP INT EQ PRINT
 %type  <val> exp term sfactor factor res stt
 
 //-- GRAMMAR RULES ---------------------------------------
 %%
 run: res run | res    /* forces bison to process many stmts */
 
-res: stt STOP         { cout << $1 << endl; } /*$1 is result*/
+res: stt STOP         { /*cout << $1 << endl;*/ } /*$1 is result*/
 
 stt: INT CHAR EQ exp  { vbltable[$2]=$4; }
-| CHAR                { cout << vbltable[$1] << endl;}
+| PRINT CHAR          { cout << vbltable[$2] << endl;}
 
 exp: exp OPA term     { $$ = ($2 == '+' ? $1 + $3 : $1 - $3); }
 | term                { $$ = $1; }

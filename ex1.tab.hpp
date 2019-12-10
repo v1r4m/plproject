@@ -57,7 +57,8 @@ extern int yydebug;
     RP = 263,
     STOP = 264,
     INT = 265,
-    EQ = 266
+    EQ = 266,
+    PRINT = 267
   };
 #endif
 
@@ -70,7 +71,7 @@ union YYSTYPE
   int val; 
   char sym;
 
-#line 74 "ex1.tab.hpp"
+#line 75 "ex1.tab.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

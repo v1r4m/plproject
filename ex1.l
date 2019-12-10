@@ -12,6 +12,7 @@ using namespace std;
 [\+|\-]  { yylval.sym = yytext[0]; return OPA; }
 [\*|/]   { yylval.sym = yytext[0]; return OPM; }
 "int"    { return INT; }
+"print"  { return PRINT; }
 [A-Za-z] { yylval.val = yytext[0]-'a'; return CHAR; }
 "("      { return LP; }
 "="      { return EQ; }
